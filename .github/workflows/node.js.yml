@@ -13,9 +13,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    
-    env: 
-      DB_password: ${AzureCosmosConnection}
       
     strategy:
       matrix:
@@ -23,6 +20,9 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
+    
+    - env: 
+        DB_password: ${AzureCosmosConnection}
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
