@@ -16,7 +16,7 @@ async function addClient(Client: Client){
     //console.log(response);
 }
 
-const bill: Client = {fname:"Bill", lname:"Gates", accountNames: [{name: "Checking", balance: 100} , {name: "Checking", balance: 100}], id: v4()}
+const bill: Client = {fname:"Bill", lname:"Gates", accounts: [{name: "Checking", balance: 100} , {name: "Checking", balance: 100}], id: v4()}
 
 //addClient(bill);
 
