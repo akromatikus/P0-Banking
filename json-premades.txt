@@ -1,0 +1,29 @@
+{
+    "fname": "Krees",
+    "lname": "Boatmare",
+    "accountNames": [{"name":"Checking", "balance":3000}]   
+}
+
+{
+    "fname": "Freddie",
+    "lname": "Spaghetti",
+    "accountNames": [{"name":"Checking" , "balance":1000}]   
+}
+
+{
+    "fname": "Jeffrey",
+    "lname": "Epstein",
+    "accountNames": [{"name":"Checking" , "balance":1} , {"name":"Cayman Islands" , "balance":100000000000}]   
+}
+
+["Don't Tell My Wife"]
+
+
+
+
+
+
+
+
+
+
