@@ -5,7 +5,7 @@ import NotFoundError from "../ERRORS/not-found-error";
 import accessContract from "./access-contract";
 
 //Azure container
-const client = new CosmosClient(process.env.AZURECONNECTION)
+const client = new CosmosClient(process.env.DB_password)
 const database = client.database('myFirstDB');
 const container = database.container('myFirstContainer');
 
