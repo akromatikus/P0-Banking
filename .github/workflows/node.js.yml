@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 env: 
-  DB_password: ${{secrets.AzureCosmos}}
+  DB_password: ${{secrets.AzureConnection}}
 
 jobs:
   build:
