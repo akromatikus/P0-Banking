@@ -15,7 +15,8 @@ export default class accessAzure implements accessContract{
     //1 
     async getClientsWithBalancesGreaterThan(amount: number): Promise<Client[]> {
       
-        const query = container.items.query(`SELECT * FROM Clients Client WHERE Client.accounts[0].balance > ${amount} OR Client.accounts[1].balance  > ${amount}`)
+        const query = container.items.query(`SELECT * FROM Clients Client WHERE Client.accounts[0].balance > 
+            ${amount} OR Client.accounts[1].balance  > ${amount}`)
         const response = await query.fetchAll();
         return response.resources
     }
