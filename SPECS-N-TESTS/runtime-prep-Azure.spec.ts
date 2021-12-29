@@ -76,5 +76,6 @@ describe("Client DAO Tests", () => {
         }).rejects.toThrowError(NotFoundError)     
     })
 
+    console.log("deleting Clients")
     accessContract.deleteAllClients()
 })

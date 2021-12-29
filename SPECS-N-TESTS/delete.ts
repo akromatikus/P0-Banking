@@ -40,11 +40,6 @@ export async function deleteAllClients(): Promise<Client[]> { //wait what, retur
     return Clients
 }
 
-//getAllClients()
-// deleteClientByName("Freddie")
-// deleteClientByName("Krees")
-// deleteClientByName("Jimmy")
-
 deleteAllClients()
 
 
