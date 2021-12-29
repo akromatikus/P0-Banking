@@ -1,11 +1,12 @@
 import { CosmosClient } from "@azure/cosmos";
+import { query } from "express";
 import { v4 } from "uuid";
 import Client from "../ENTITIES/client";
 import NotFoundError from "../ERRORS/not-found-error";
 import accessContract from "./access-contract";
 
 //Azure container
-const client = new CosmosClient(process.env.DB_password) //DB_password 
+const client = new CosmosClient(process.env.DB_password ?? process.env.AzureCosmosConnection )
 const database = client.database('myFirstDB');
 const container = database.container('myFirstContainer');
 
@@ -29,7 +30,10 @@ export default class accessAzure implements accessContract{
     }
     //3
     async getAllClients(): Promise<Client[]> {
-        const response = await container.items.readAll<Client>().fetchAll();
+        const query = await container.items.query(
+            `SELECT [C.fname, C.lname, C.id, C.accounts] AS CLIENT FROM Clients C `);
+        
+        const response = await query.fetchAll()
         return response.resources
     }
     //4

@@ -12,9 +12,7 @@ const runtimeAccess: accessContract = new accessAzure();
 // Get a list of all clients
 app.get("/clients", async (req, res) => {   
     const clientList: Client[] = await runtimeAccess.getAllClients();
-    res.send(clientList.map( thisClient => {
-        return (`${thisClient.fname } ${thisClient.lname}`)
-    })).status(200)
+    res.status(200).send(clientList)
 });
 
 // Get client by ID
@@ -22,7 +20,7 @@ app.get('/clients/:id', async (req, res) => {
     try {
         const {id} = req.params;
         const Client: Client = await runtimeAccess.getClientById(id)
-        res.send(`${Client.fname } ${Client.lname}`); return Client  
+        res.send(Client); return Client  
     } 
     catch{       
         res.status(404).send(`The Client with that ID does not exist` )        
@@ -60,13 +58,18 @@ app.get('/clients/:id/accounts', async (req, res) => {
             if (matchingAccounts.length > 0){res.send(matchingAccounts)}
             else{res.send(`No account could be found with balances in the desired range`)} 
         }
-
         // if no query was made return the accounts names
-        else{
-            res.send(Client.accounts)
-        }
+        else if(Client.accounts != null){res.send(Client.accounts)}
+        else {res.send("The Client does not have any accounts.")}
     }
-    catch{res.status(404).send("The Client with that ID does not exist")}              
+    catch (error) {
+        if (error instanceof NotFoundError){
+            res.status(404).send("The Client with that ID does not exist")
+        }
+        else{
+            res.status(404).send("The Client does not have any accounts.")
+        }    
+    }              
 });
 
 // Create a new client
@@ -86,21 +89,22 @@ app.post("/clients/:id/accounts", async (req, res) => {
     
     //get client by ID
     const {id} = req.params
-    const Client: Client = await runtimeAccess.getClientById(id)
-    
-    //!JSON in postman did NOT like strings, so an array with a single string was needed
-    let newName: string = req.body[0]
-    
-    Client.accounts.push({name: newName, balance: 0})
-    
     try{
+        const Client: Client = await runtimeAccess.getClientById(id)
+    
+        //!JSON in postman did NOT like strings, so an array with a single string was needed
+        let newName: string = req.body[0]
+    
+        //try to add an account to accounts. If no accounts exist, declare a new one instead.
+        try{Client.accounts.push({name: newName, balance: 0})}
+        catch{Client.accounts = [{name: newName, balance: 0}]}
+    
         await runtimeAccess.updateClient(Client)
-        res.status(201).send(Client);
+        res.status(201).send(`The account ${newName} has been created`);
     }
     catch{
         res.status(404).send("The Client with that ID does not exist")
-    }
-    
+    }   
 });
 
 // Update a client by ID. 
@@ -117,6 +121,7 @@ app.put('/Clients/:id', async (req, res) => {
     Client.id = id
 
     try{
+        await runtimeAccess.getClientById(id)
         await runtimeAccess.updateClient(Client)
         res.send(`The Client info was updated`);
     }
@@ -141,9 +146,9 @@ app.patch('/Clients/:id/:accountName/:amount', async (req, res)  => {
 
     //get client by ID, as well as the account and whether they want to deposit or withdraw from it
     const {id, accountName, amount} = req.params;
-    const Client: Client = await runtimeAccess.getClientById(id)
-
     try{
+        const Client: Client = await runtimeAccess.getClientById(id)
+
         //return an array of account names and find the index of the name matching the query
         const accountID: number = Client.accounts.map(iterate  => {
             return iterate.name
@@ -154,14 +159,19 @@ app.patch('/Clients/:id/:accountName/:amount', async (req, res)  => {
         thisBalance += Number(amount)
         
         // update the client's account if funds are available
-        if (thisBalance < 0){res.status(422).send("You can't just steal from us you ape")}
+        if (thisBalance < 0){res.status(422).send("You can't just steal from us.")}
         else{Client.accounts[accountID].balance = thisBalance; 
             await runtimeAccess.updateClient(Client); 
-            res.send("Client patch successful");
+            res.send("The client money transfer was successful");
         }
     }
-    catch{
-        res.status(404).send(`The account ${accountName} does not exist`)   
+    catch (error){
+        if (error instanceof NotFoundError){
+            res.status(404).send('A client with that ID does not exist')
+        }
+        else{
+            res.status(404).send(`The account ${accountName} does not exist`) 
+        }  
     }   
 })
 
