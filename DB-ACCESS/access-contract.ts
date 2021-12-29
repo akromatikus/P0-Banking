@@ -21,5 +21,6 @@ export default interface accessContract{
 
     //DELETE
     deleteClientById(id: string): Promise<Client>;
+    deleteAllClients(): Promise<null>;
 }
 

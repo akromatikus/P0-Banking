@@ -5,7 +5,7 @@ import NotFoundError from "../ERRORS/not-found-error";
 import accessContract from "./access-contract";
 
 //Azure container
-const client = new CosmosClient(process.env.DB_password)
+const client = new CosmosClient(process.env.AzureCosmosConnection) //DB_password 
 const database = client.database('myFirstDB');
 const container = database.container('myFirstContainer');
 
@@ -36,11 +36,9 @@ export default class accessAzure implements accessContract{
     async getClientById(chosenID: string): Promise<Client> {
         const response = await container.item(chosenID,chosenID).read<Client>()
         
-        // !if the response.resource is undefined it means you did not fetch anythng
         if(!response.resource){
             throw new NotFoundError("Resource could not be found", chosenID);
         }
-        // is there a shorter syntax to get an pbject with these specific properties
         const {fname,lname,accounts,id} = response.resource   
         return {fname,lname,accounts,id}
     }
@@ -54,5 +52,18 @@ export default class accessAzure implements accessContract{
         const Client = await this.getClientById(id)
         const response = await container.item(id,id).delete();
         return Client;
+    }
+    //7
+    async deleteAllClients(): Promise<null> {
+        const Clients = await this.getAllClients()
+        let clients: Client
+    
+        //for each client object in the client array
+        for (clients of Clients){
+            
+            //delete the client
+            await container.item(clients.id,clients.id).delete();    
+        }
+        return null
     }
 }

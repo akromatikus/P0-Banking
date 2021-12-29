@@ -13,7 +13,7 @@ async function addClient(Client: Client){
     //console.log(response);
 }
 
-const bill: Client = {fname:"Bill", lname:"Gates", accountNames: [{name: "Checking", balance: 100} , {name: "Checking", balance: 100}], id: v4()}
+const bill: Client = {fname:"Bill", lname:"Gates", accounts: [{name: "Checking", balance: 100} , {name: "Checking", balance: 100}], id: v4()}
 
 //addClient(bill);
 
@@ -32,15 +32,15 @@ async function getClientById(chosenID: string): Promise<Client> {
         throw new NotFoundError("Resource could not be found", chosenID);
     }
     // is there a shorter syntax to get an pbject with these specific properties
-    const {fname,lname,accountNames,id} = response.resource   
-    return {fname,lname,accountNames,id}
+    const {fname,lname,accounts,id} = response.resource   
+    return {fname,lname,accounts,id}
 }
 
 
 async function getByAmount(){
     const Client: Client = await getClientById('972ebfa6-0f40-4cab-8a77-2cf84d7300af')
-    //console.log(Client.accountNames)
-    let matchingAccounts = Client.accountNames.filter(iterate => { if(iterate.balance < 2000 && iterate.balance > 4000) {return true} else{return false} })
+    //console.log(Client.accounts)
+    let matchingAccounts = Client.accounts.filter(iterate => { if(iterate.balance < 2000 && iterate.balance > 4000) {return true} else{return false} })
     console.log(matchingAccounts.length)
     return matchingAccounts  
 }

@@ -1,10 +1,11 @@
-import accessContract/* , { accessContractLocalFile }*/ from "../DB-ACCESS/access-contract"
+import accessContract from "../DB-ACCESS/access-contract"
 import accessAzure from "../DB-ACCESS/runtime-prep-Azure";
 import Client from "../ENTITIES/client";
-import NotFoundError from "../ERRORS/not-found-error";
+import NotFoundError from "../ERRORS/not-found-error"; 
 
-describe("Client Dao Tests", () => {
+describe("Client DAO Tests", () => {
 
+    //needed to prep the database for successive jest runs
     const accessContract: accessContract = new accessAzure()
 
     //used to create the 3 clients which will be used for all the jest tests
@@ -74,4 +75,6 @@ describe("Client Dao Tests", () => {
             await accessContract.getClientById(savedClient.id)
         }).rejects.toThrowError(NotFoundError)     
     })
+
+    accessContract.deleteAllClients()
 })
